@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+    <title>Profile</title>
+  </head>
+  <body>
+    <div id="container">
+      <a href="/groups">Dashboard>></a>
+      <a class="logout" href="/logout">Log Out>></a>
+      <div class="move_rg">
+        <h2>Group Name: {{one_group.name}}</h2>
+        {% if current_user not in one_group.users_that_joined.all %}
+        <form action="/group/add/{{one_group.id}}" method="POST">
+          {% csrf_token %}
+          <input type="submit" value="Join Group {{one_group.id}}" />
+        </form>
+        {% else %}
+        <form action="/group/remove/{{one_group.id}}" method="POST">
+          {% csrf_token %}
+          <input type="submit" value="Leave Group {{one_group.id}} " />
+        </form>
+        {% endif %}
+        <p></p>
+        <p>{{one_group.description}}</p>
+      </div>
+
+      <div>
+        <h4>
+          Created by: {{one_group.member.first_name}}
+          {{one_group.member.last_name}}
+        </h4>
+        <p>Current Members</p>
+        {% for each_member in one_group.users_that_joined.all %}
+        <ul>
+          <li>{{each_member.first_name}} {{each_member.last_name}}</li>
+        </ul>
+        {% endfor%}
+      </div>
+
+      <div>
+        <p>Users Who are not a Current Member</p>
+        {% for each_user in all_users %}
+        <ul>
+          {% if each_user not in one_group.users_that_joined.all %}
+          <li>{{each_user.first_name}} {{each_user.last_name}}</li>
+        </ul>
+        {% endif %}
+        <p></p>
+        {% endfor%}
+      </div>
+    </div>
+  </body>
+</html>
